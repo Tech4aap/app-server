@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\product_name;
+
 use Illuminate\Http\Request;
+use App\Models\product_name;
 
-
-class YarnController extends Controller
+class YarnDetailsController extends Controller
 {
+    //
 
     public function create_YarnName(Request $request)
     {
@@ -18,10 +19,9 @@ class YarnController extends Controller
         echo "hi";
         
         $productName = new product_name();
-        $productName->NAME = $request->input('NAME');
+        $productName->NAME = $request->input('Productname');
         $productName->save();
 
         return response()->json(['message' => 'Successfully created user!'], 201);
     }
-
 }

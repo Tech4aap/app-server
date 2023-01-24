@@ -19,7 +19,7 @@ use App\Models\fabric_information;
 use App\Models\finance_cost;
 use App\Models\onborading;
 
-use app\Http\Controllers\YarnControllers;
+use app\Http\Controllers\YarnDetailsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,7 +37,7 @@ Route::get('/pname', function () {
 
 
 
-Route::post('/pname', 'YarnControllers@NamePost');
+Route::post('/pname', 'YarnDetailsController@create_YarnName');
 
 
 
