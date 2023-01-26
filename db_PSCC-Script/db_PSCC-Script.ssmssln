@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# SQL Server Management Studio Solution File, Format Version 18.00
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "db_PSCC-Script", "db_PSCC-Script\db_PSCC-Script.ssmssqlproj", "{2F112D6D-CD05-4F76-B3A1-CF42D94C17A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Default|Default = Default|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F112D6D-CD05-4F76-B3A1-CF42D94C17A2}.Default|Default.ActiveCfg = Default
+		{2CB3D43C-5ED1-477F-AE26-7EE45957DA9A}.Default|Default.ActiveCfg = Default
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C017A8F8-B148-41CD-BEF9-B69E51F4C99D}
+	EndGlobalSection
+EndGlobal
