@@ -3,21 +3,25 @@ const mysql = require('mysql2');
 
 const app = express();
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
+    host: '184.168.108.252',
+    user: 'pscc_db',
+    password: 'll&4v=$U~5ey',
     database: 'db_pscc'
 });
 
 // Connect to the database
-connection.connect();
 
 // GET all items
 app.get('/items', (req, res) => {
-    connection.query('SELECT * FROM apparel_informations', (err, rows) => {
+    connection.connect();
+    connection.query('SELECT `NAME` FROM product_types', (err, rows) => {
         if (err) res.status(500).send(err);
-        else res.json(rows);
+        else {
+            res.json(rows).status(200);
+        }
     });
+    
+    connection.destroy();
 });
 
 // GET one item by id

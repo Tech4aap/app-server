@@ -2,9 +2,9 @@
   "name": "pscc-calculator",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "nodemon Server.js"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
