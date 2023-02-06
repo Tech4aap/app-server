@@ -43,6 +43,7 @@ async function getData(ids) {
 
 router.get("/your/path", async (req, res) => {
   try {
+    console.log("api is set")
     const html = fs.readFileSync(path.join(__dirname, '../template/report.html'), 'utf-8');
     const filename = Math.random() + '_doc' + '.pdf';
     let array = [];
