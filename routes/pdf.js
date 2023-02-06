@@ -81,13 +81,13 @@ router.get("/your/path", async (req, res) => {
         },
         path: './docs/' + filename
     }
-    await pdf.create(document, options)
-        .then(res => {
-            console.log(res);
-        }).catch(error => {
-            console.log(error);
-        });
-        res.status(200).download('./docs/' + filename);
+    // await pdf.create(document, options)
+    //     .then(res => {
+    //         console.log(res);
+    //     }).catch(error => {
+    //         console.log(error);
+    //     });
+    res.status(200).download(fs.createReadStream('./docs/' + filename));
         fs.unlink('./docs/' + filename, (err) => {
           if (err) {
               throw err;

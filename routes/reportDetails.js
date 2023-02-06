@@ -12,16 +12,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const report = new reportDetails(req.body);
-
-  try {
-    const savedreport = await report.save();
-    res.status(200).json(savedreport);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
 
 //GET ALL reportDetails
 router.get("/:id", async (req, res) => {
@@ -36,5 +26,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+
+router.post("/", async (req, res) => {
+  const report = new reportDetails(req.body);
+
+  try {
+    const savedreport = await report.save();
+    res.status(200).json(savedreport);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 module.exports = router;
