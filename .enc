@@ -1,0 +1,4 @@
+
+
+PORT = "6969"
+MONGDB_URL = "mongodb+srv://pscc:BXV5qc1xo5sIXvyu@cluster0.puhnnbv.mongodb.net/?retryWrites=true&w=majority"

@@ -1,12 +1,13 @@
+require("dotenv").config();
+
 const express = require('express');
 
-const dotenv  = require('dotenv');
 const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
-dotenv.config();
 
+mongoose.set('strictQuery', false);
 mongoose
   .connect(process.env.MONGDB_URL)
   .then(() => console.log("DB Connection Successfull!"))
@@ -14,10 +15,17 @@ mongoose
     console.log(err);
   });
 
-mongoose.set('strictQuery', false);
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/yarns", require("./routes/yarn"));
+app.use("/api/product", require("./routes/product"));
+app.use("/api/report", require("./routes/reportConstant"));
+app.use("/api/details/", require("./routes/reportDetails"));
+app.use("/api/create/", require("./routes/report"));
+app.use("/api/pdf/", require("./routes/pdf"));
+
 
 
 app.listen(process.env.PORT || 6969, () => {

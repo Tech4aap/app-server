@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const YarnNameSchema = new mongoose.Schema(
+const productNameSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     status: { type: Boolean, default: true },
@@ -8,4 +8,4 @@ const YarnNameSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("yarnName", YarnNameSchema);
+module.exports = mongoose.model("productName", productNameSchema);
