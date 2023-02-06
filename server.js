@@ -7,6 +7,9 @@ const cors = require("cors");
 
 const app = express();
 
+const appDetails = {version :"v1", name: "PSC Calculator", author: "Muhammad Fahad"};
+
+
 mongoose.set('strictQuery', false);
 mongoose
   .connect(process.env.MONGDB_URL)
@@ -19,9 +22,24 @@ mongoose
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.render('index', { title: 'Hey', message: 'Hello there!' })
-})
+app.get('/', async (req, res) =>{
+  try {
+    res.status(200).json(appDetails.version);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+app.get('/version_:v', async (req, res) =>{
+  try {
+    
+    appDetails.version = req.params.v;
+    res.status(200).json(appDetails.version);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 
 
 app.use("/api/yarns", require("./routes/yarn"));
