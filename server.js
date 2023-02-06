@@ -24,7 +24,7 @@ app.use(express.json());
 
 app.get('/', async (req, res) =>{
   try {
-    res.status(200).json(appDetails.version);
+    res.status(200).json("appDetails.version");
   } catch (err) {
     res.status(500).json(err);
   }
@@ -32,7 +32,7 @@ app.get('/', async (req, res) =>{
 
 app.get('/version_:v', async (req, res) =>{
   try {
-    
+
     appDetails.version = req.params.v;
     res.status(200).json(appDetails.version);
   } catch (err) {
