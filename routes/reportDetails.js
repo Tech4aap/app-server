@@ -29,7 +29,7 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const report = new reportDetails(req.body);
-
+  
   try {
     const savedreport = await report.save();
     res.status(200).json(savedreport);

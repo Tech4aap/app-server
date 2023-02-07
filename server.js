@@ -45,7 +45,7 @@ app.use("/api/yarns", require("./routes/yarn"));
 app.use("/api/product", require("./routes/product"));
 app.use("/api/report", require("./routes/reportConstant"));
 app.use("/api/details/", require("./routes/reportDetails"));
-app.use("/api/create/", require("./routes/report"));
+app.use("/api/new/", require("./routes/report"));
 app.use("/api/pdf/", require("./routes/pdf"));
 
 
