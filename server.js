@@ -47,6 +47,7 @@ app.use("/api/report", require("./routes/reportConstant"));
 app.use("/api/details/", require("./routes/reportDetails"));
 app.use("/api/new/", require("./routes/report"));
 app.use("/api/pdf/", require("./routes/pdf"));
+app.use("/api/", require("./routes/generatePdf"));
 
 
 
