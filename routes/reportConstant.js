@@ -6,7 +6,9 @@ const router = require("express").Router();
 router.get("/", async (req, res) => {
   try {    
     const model = await ModelDetails.find({status: true});
-    res.status(200).json(model);
+    const respones = model.map(({ name, details }) => ({ name, details }));
+    
+    res.status(200).json(respones);
   } catch (err) {
     res.status(500).json(err);
   }
