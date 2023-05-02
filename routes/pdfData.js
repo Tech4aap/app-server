@@ -130,7 +130,8 @@ router.post("/", async (req, res) => {
   const pdfData = new pdfData({name:name, data: req.body});
 
   try {
-    const savedpdfData = await pdfData.save();
+    await pdfData.save();
+    console.log(name);
     res.status(200).json({suucess: true, data: name, message: "Data saved successfully"});
   } catch (err) {
     res.status(500).json({suucess: false, message: "Data not saved successfully"});
