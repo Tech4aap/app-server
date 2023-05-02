@@ -1,6 +1,7 @@
 const PDFDocument = require('pdfkit-table');
 const { v4: uuidv4 } = require('uuid');
 const Structure = require("../models/structrue");
+const PdfData = require("../models/pdfData");
 
 
 
@@ -14,12 +15,17 @@ async function getStructureOfData (){
 }
 
 
-router.get('/', async (req, res) =>{
+router.post('/', async (req, res) =>{
   let fontBold = 'Courier-Bold';
   let id = uuidv4();
   
+  
   try {
     // Document Creation
+    let data = new PdfData({name: id, data: req.body});
+    data = data.save();
+    console.log(req.body, data);
+
     const doc = new PDFDocument({
       size: "A4",
       margin: 10,
