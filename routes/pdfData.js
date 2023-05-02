@@ -97,7 +97,7 @@ router.get('/:id', async (req, res) =>{
     res.writeHead(200, {
       'Content-Type': 'application/pdf',
     });
-    
+
     doc.pipe(res); 
     doc.end();
    
@@ -146,5 +146,16 @@ router.get("/", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+router.get("/find/:id", async (req, res) => {
+  try {
+    const models = await pdfData.find({name: req.params.id});
+    res.status(200).json(models);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
 
 module.exports = router;
