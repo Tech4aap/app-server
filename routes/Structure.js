@@ -23,6 +23,17 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/update/:col", async (req, res) => {
+  try {
+    const report = await structrue.updateOne(
+      { name: req.params.col },
+      { $set: req.body }
+    );
+    res.status(200).json(report);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 
 module.exports = router;
