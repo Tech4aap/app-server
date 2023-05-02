@@ -127,10 +127,10 @@ function generateTitle(doc, id) {
 
 router.post("/", async (req, res) => {
   const name = uuidv4();
-  const pdfData = new pdfData({name:name, data: req.body});
+  const respones = new pdfData({name:name, data: req.body});
 
   try {
-    await pdfData.save();
+    await respones.save();
     console.log(name);
     res.status(200).json({suucess: true, data: name, message: "Data saved successfully"});
   } catch (err) {
