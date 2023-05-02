@@ -1,7 +1,6 @@
 const PDFDocument = require('pdfkit-table');
 const { v4: uuidv4 } = require('uuid');
 const Structure = require("../models/structrue");
-const PdfData = require("../models/pdfData");
 const pdfData = require('../models/pdfData');
 
 
@@ -23,10 +22,6 @@ router.get('/:id', async (req, res) =>{
   
   try {
     // Document Creation
-    // let data = new PdfData({name: id, data: req.body});
-    // data = data.save();
-    // console.log(req.body, data);
-
     const doc = new PDFDocument({
       size: "A4",
       margin: 10,
@@ -38,12 +33,18 @@ router.get('/:id', async (req, res) =>{
     
     // For the table Structure
     const structure = await getStructureOfData();
+    const respone = (await pdfData.find({name: id}))[0].data;
 
-    // For 
+    // For Y axis Position
     let lastOne = 0;
     let startFrom = 120;
 
+    // For the table temp data
+    let previous = {};
+
+    // For the table Structure and data
     structure.map((item,index) => {
+      // for the table S.NO
       let header = [{ label: "", property: 'number', renderer: null, width: 10}];
       let data = [];
       const array = ["", ...item.rows];
@@ -56,8 +57,24 @@ router.get('/:id', async (req, res) =>{
           if(i == 0){
             header.push({ label: items.name, property: items.name, renderer: null, width : 565 / (item.header.length)})
           }else{
+            if(items.name == "Title" || items.name == "Description" || items.name == "Categories"){
+                temp[items.name] = element;
+            }else{
+              let dataToFIle = "";
+              switch (item.name) {
+                case "Basic Information":
+                  dataToFIle = respone["basicInformation"][i-1]["param"];
+                  temp[items.name] = dataToFIle;
+                  break;
+                case "Product Information":
+                  break;
+                case "":
+                  dataToFIle = respone["basicInformation"][i-1]["param"];
+                  break;
 
-            temp[items.name] = element;
+              }
+
+            }
           }
         });
         if(i != 0){
@@ -66,14 +83,32 @@ router.get('/:id', async (req, res) =>{
         }
       }
 
+      // For the last row of the table
+      if(item.name == "Basic Information" && respone["basicInformation"][respone["basicInformation"].length - 1]["param"] == ""){
+        data.pop();
+      }else if(item.name == "Product Information"){
+        let yarns = previous["Basic Information"][4];
+        let yarnInfo = null;
+        for (let i = 0; i < yarns; i++) {
+          yarnInfo = respone["productInformation"]["productInformationList"][i];
+          data.push({
+            "number": data.length + 1,
+            "Title": yarnInfo["selectType"],
+            "Rate(lbs)": yarnInfo["param1"],
+            "Rate(Kg)": yarnInfo["ratekg"],
+            "Percentage": yarnInfo["param1"],
+            "Total per Kg": yarnInfo["totalperkg"],
+          });
+        }
+      }
+
       const table = {
         title:  { label: `${1+index}. ${item.name}`, fontFamily: fontBold },
         headers: header,    
         datas: data,
-        // widths: width,
       };
       
-      
+      previous[item.name] = data;
       lastOne += ((data.length + 1) * 20);
       
       if((startFrom + lastOne) > doc.page.height){
