@@ -2,6 +2,7 @@ const PDFDocument = require('pdfkit-table');
 const { v4: uuidv4 } = require('uuid');
 const Structure = require("../models/structrue");
 const PdfData = require("../models/pdfData");
+const pdfData = require('../models/pdfData');
 
 
 
@@ -15,16 +16,16 @@ async function getStructureOfData (){
 }
 
 
-router.post('/', async (req, res) =>{
+router.get('/:id', async (req, res) =>{
   let fontBold = 'Courier-Bold';
-  let id = uuidv4();
+  let id = req.params.id;
   
   
   try {
     // Document Creation
-    let data = new PdfData({name: id, data: req.body});
-    data = data.save();
-    console.log(req.body, data);
+    // let data = new PdfData({name: id, data: req.body});
+    // data = data.save();
+    // console.log(req.body, data);
 
     const doc = new PDFDocument({
       size: "A4",
@@ -93,26 +94,18 @@ router.post('/', async (req, res) =>{
     });
 
   
+    res.writeHead(200, {
+      'Content-Type': 'application/pdf',
+    });
+    
     doc.pipe(res); 
     doc.end();
    
-    // res.writeHead(200, {
-    //   'Content-Type': 'application/pdf',
-    // });
 
   } catch (err) {
     res.status(500).json(err);
   }
 });
-
-function tableHeader(data){
-  let header = [{ label: "", property: 'number', renderer: null }];
-  data.map((item) => {
-    header.push({ label: item.name, property: item.type, renderer: null, })
-  })
-  return header;
-}
-
 
 // Top header of the document
 function generateTitle(doc, id) {
@@ -133,15 +126,25 @@ function generateTitle(doc, id) {
 
 
 router.post("/", async (req, res) => {
-  const model = new ModelDetails(req.body);
+  const name = uuidv4();
+  const pdfData = new pdfData({name:name, data: req.body});
 
   try {
-    const savedModel = await model.save();
-    res.status(200).json(savedModel);
+    const savedpdfData = await pdfData.save();
+    res.status(200).json({suucess: true, data: name, message: "Data saved successfully"});
+  } catch (err) {
+    res.status(500).json({suucess: false, message: "Data not saved successfully"});
+  }
+});
+
+
+router.get("/", async (req, res) => {
+  try {
+    const models = await pdfData.find({status: true});
+    res.status(200).json(models);
   } catch (err) {
     res.status(500).json(err);
   }
 });
-
 
 module.exports = router;
