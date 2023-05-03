@@ -11,6 +11,15 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {    
+    const report = await structrue.find({_id: req.params.id, status: true});
+    res.status(200).json(report);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 
 router.post("/", async (req, res) => {
   const report = new structrue(req.body);
@@ -25,10 +34,14 @@ router.post("/", async (req, res) => {
 
 router.put("/update/:col", async (req, res) => {
   try {
-    const report = await structrue.updateOne(
-      { name: req.params.col },
+    const report = structrue.updateOne(
+      { $name: req.body.name },
       { $set: req.body }
     );
+
+    const report2 = await structrue.findOne({_id: req.params.col});
+
+    console.log(report2);
     res.status(200).json(report);
   } catch (err) {
     res.status(500).json(err);
