@@ -45,11 +45,14 @@ router.get('/:id', async (req, res) =>{
     // For the table Structure and data
     structure.map((item,index) => {
 
-      // for the table S.NO
+      // for the table S.NO and header
       let header = [{ label: "", property: 'number', renderer: null, width: 10}];
       
+      // for main data, and the table data
       let data = [];
 
+
+      // For the table header
       const array = ["", ...item.rows];
 
       for (let i = 0; i < array.length; i++) {
@@ -80,17 +83,16 @@ router.get('/:id', async (req, res) =>{
             }
           }
         });
+
         if(i != 0){
           temp["number"] = i;
           data.push(temp);
         }
       }
 
-      // For the last row of the table
-      
       
         // For the Basic Information
-       if(item.name == "Basic Information"){
+      if(item.name == "Basic Information"){
         if(respone["basicInformation"][respone["basicInformation"].length - 1]["param"] == ""){
           data.pop();
           previous["isCurrency"] = false;
@@ -236,15 +238,11 @@ router.get('/:id', async (req, res) =>{
 
       // For Final Cost For Customer
       else if(item.name == "Final Cost For Customer"){
-        
-
-        console.log(data)
-
         data[0]["Per PC"] = respone["finalCosting"]["finalCostingList"][0]["value1"];
         data[0]["Per Kg"] = respone["finalCosting"]["finalCostingList"][0]["value2"];
 
         if(previous["isCurrency"]){
-          data.push({"number":"2","Title": "Cost in"+respone["basicInformation"][respone["basicInformation"].length - 1]["param"], "Per PC": respone["finalCosting"]["finalCostingList"][1]["value1"], "Per Kg": respone["finalCosting"]["finalCostingList"][1]["value2"]});
+          data.push({"number":"","Title": "Cost in"+respone["basicInformation"][respone["basicInformation"].length - 1]["param"], "Per PC": respone["finalCosting"]["finalCostingList"][1]["value1"], "Per Kg": respone["finalCosting"]["finalCostingList"][1]["value2"]});
 }
       if(previous["isPack"])
         header.pop()
@@ -293,7 +291,7 @@ router.get('/:id', async (req, res) =>{
 
   } catch (err) {
     console.log(err);
-    res.status(500).json(err);
+    res.status(500).json({message: err.message});
   }
 });
 
@@ -302,7 +300,7 @@ function generateTitle(doc, id) {
   let fontBold = 'Courier-Bold';
   
   // Image of logo on the top rigth of the document with width and height
-  doc.image('./logo.png', 500, 15, {fit: [77, 70], align: 'center', valign: 'center'})
+  // doc.image('./logo.png', 500, 15, {fit: [77, 70], align: 'center', valign: 'center'})
   
   // Main title of the document on the top center of the document
   doc.font(fontBold).fontSize(35).text('PSCC REPORT', 7, 80,{align:'center'});
@@ -310,8 +308,8 @@ function generateTitle(doc, id) {
   
   // Details of the document on the top left of the document
   doc.font(fontBold).fontSize(8).text(`Id: ${id}`, 7, 30, {align:'left'});
-  doc.font(fontBold).fontSize(8).text(`Link: ${id}`, 7, 40, {align:'left'});
-  doc.font(fontBold).fontSize(8).text(`Date: ${(new Date()).toString()}`, 7, 50, {align:'left'});
+  // doc.font(fontBold).fontSize(8).text(`Link: ${id}`, 7, 40, {align:'left'});
+  doc.font(fontBold).fontSize(8).text(`Date: ${(new Date()).toDateString()}`, 7, 30, {align:'right'});
 }
 
 
