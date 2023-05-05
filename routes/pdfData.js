@@ -72,12 +72,6 @@ router.get('/:id', async (req, res) =>{
                   dataToFIle = respone["basicInformation"][i-1]["param"];
                   temp[items.name] = dataToFIle;
                   break;
-                case "Product Information":
-                  break;
-                case "":
-                  dataToFIle = respone["basicInformation"][i-1]["param"];
-                  break;
-
               }
 
             }
@@ -93,6 +87,7 @@ router.get('/:id', async (req, res) =>{
       
         // For the Basic Information
       if(item.name == "Basic Information"){
+
         if(respone["basicInformation"][respone["basicInformation"].length - 1]["param"] == ""){
           data.pop();
           previous["isCurrency"] = false;
@@ -107,7 +102,7 @@ router.get('/:id', async (req, res) =>{
         
         if(previous["isNormal"] == 2)
           structure.splice(2 ,1);
-        else if(previous["isNormal"] == 1)
+        else if(previous["isNormal"] == 1 || previous["isNormal"] == 3)
           structure.splice(3 ,1);
         if(previous["isPack"])
           structure.splice(6 ,1);
@@ -141,13 +136,15 @@ router.get('/:id', async (req, res) =>{
 
       // For the Per Piece Information
       else if(item.name == "Per Piece Information" || item.name == "Per Piece Apparel Infomation"){
-        console.log(data[2]['']);
-        for (let i = 0; i < data.length; i++) {
-        const element = data[i];
-
-        if(previous["isNormal"] != 2)
+        for (let i = 0; i < 3; i++) {
+          const element = data[i];
+          
+          if(previous["isNormal"] != 2){
+            console.log(i);
+            console.log(respone["perPieceInfo"]["perPieceInfo_Cat"][i]["param"], i);
             element[""] = respone["perPieceInfo"]["perPieceInfo_Cat"][i]["param"];
-        else if(previous["isNormal"] == 2){
+          }
+          else if(previous["isNormal"] == 2){
             if(i == 0 || i == data.length - 1)
               element["Total"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["param1"];
             
@@ -159,7 +156,7 @@ router.get('/:id', async (req, res) =>{
           }
         }
 
-        data.push({"Categories": `Piece Weight ${previous["isNormal"] == 3 ? "2": ""}`, "": respone["perPieceInfo"]["pieceWeight"], "Total": respone["perPieceInfo"]["pieceWeight"]})
+        data.push({"Categories": `Piece Weight ${previous["isNormal"] == 3 ? " X 2(For Mattress Cover)": ""}`, "": respone["perPieceInfo"]["pieceWeight"], "Total": respone["perPieceInfo"]["pieceWeight"]})
       }
 
       // For the Production Wastages
