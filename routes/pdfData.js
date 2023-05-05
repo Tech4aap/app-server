@@ -115,6 +115,7 @@ router.get('/:id', async (req, res) =>{
         let yarnInfo = null;
         for (let i = 0; i < yarns; i++) {
           yarnInfo = respone["productInformation"]["productInformationList"][i];
+          console.log((i == yarns - 1));
           data.push({
             "number": data.length + 1,
             "Type": yarnInfo["selectType"],
@@ -123,12 +124,14 @@ router.get('/:id', async (req, res) =>{
             "Percentage": yarnInfo["param2"],
             "Total per Kg": (yarnInfo["totalperkg"]).toFixed(2),
           });
-
           sum += yarnInfo["totalperkg"] * 1;
           percent += yarnInfo["param2"] * 1;
         }
 
+        data[data.length-1]["options"] = { fontSize: 10, font: fontBold, separation: true};
         data.push({
+          options: { fontSize: 10, font: fontBold, separation: true},
+          "Type": "Total Yarn Cost:",
           "Percentage": percent,
           "Total per Kg": sum.toFixed(2),
         });
@@ -144,22 +147,24 @@ router.get('/:id', async (req, res) =>{
             element[""] = respone["perPieceInfo"]["perPieceInfo_Cat"][i]["param"];
           }
           else if(previous["isNormal"] == 2){
-            if(i == 0)
+            if(i == 0){
+              element["Width"] = "-";
+              element["Length"] = "-";
               element["Total"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["param1"];
-            else if(i == data.length){
-              element["Length"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["param1"];
-              element["Total"] = (respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["value"] * 1).toFixed(0);
             }
-
             else{
               element["Width"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["param1"];
               element["Length"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["param2"];
-              element["Total"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["value"];
+              element["Total"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["value"].toFixed(2);
             }
           }
         }
-
-        data.push({"Categories": `Piece Weight ${previous["isNormal"] == 3 ? " X 2(For Matters)": ""}`, "": respone["perPieceInfo"]["pieceWeight"], "Total": respone["perPieceInfo"]["pieceWeight"]})
+        data[data.length-1]["options"] = { fontSize: 10, font: fontBold, separation: true};
+        data.push({
+          options: { fontSize: 10, font: fontBold, separation: true},
+          "Categories": `Piece Weight ${previous["isNormal"] == 3 ? " X 2(For Mattress Cover)": ""}`, "": respone["perPieceInfo"]["pieceWeight"], 
+          "Total": respone["perPieceInfo"]["pieceWeight"]
+        })
       }
 
       // For the Production Wastages
@@ -169,21 +174,30 @@ router.get('/:id', async (req, res) =>{
           const element = data[i];
 
           element["Percentages"] = respone["productWastage"]["productWastageList"][i]["param"];
-          element["Cost"] = (respone["productWastage"]["productWastageList"][i]["param"] / 100) * temp;
+          element["Cost"] = ((respone["productWastage"]["productWastageList"][i]["param"] / 100) * temp).toFixed(2);
         }
-        
-        data.push({"Percentages": respone["productWastage"]["totalPercentage"].toFixed(2), "Cost": respone["productWastage"]["totalCost"].toFixed(2)})
+        data[data.length-1]["options"] = { fontSize: 10, font: fontBold, separation: true};
+        data.push({
+          options: { fontSize: 10, font: fontBold, separation: true},
+          "Percentages": respone["productWastage"]["totalPercentage"].toFixed(2), 
+          "Cost": respone["productWastage"]["totalCost"].toFixed(2)
+        })
       }
 
       // For the fabric Cost Information
       else if(item.name == "Fabric Cost Information"){
         for (let i = 0; i < data.length - 1; i++) {
           const element = data[i];
-          element[""] = respone["fabricCostInfo"]["fabricCostInfoList"][i]["param"];
+          element[""] = respone["fabricCostInfo"]["fabricCostInfoList"][i]["param"].toFixed(2);
         }
 
         data[data.length - 1][""] = respone["perPieceInfo"]["pieceWeight"];
-        data.push({"Categories": "Per Piece Fabric Cost:", "": respone["fabricCostInfo"]["perPcFabric"]})
+        data[data.length-1]["options"] = { fontSize: 10, font: fontBold, separation: true};
+        data.push({
+          options: { fontSize: 10, font: fontBold, separation: true},
+          "Categories": "Per Piece Fabric Cost:",
+          "": respone["fabricCostInfo"]["perPcFabric"].toFixed(2)
+        })
       }
 
       // For CMT Cost Per Piece (without Packing)
@@ -191,58 +205,72 @@ router.get('/:id', async (req, res) =>{
         let perKg = respone["perPieceInfo"]["pieceWeight"] / 1000;
         for (let i = 0; i < data.length; i++) {
           const element = data[i];
-            element["Per PC"] = i == 0 ? respone["fabricCostInfo"]["perPcFabric"]: respone["costPerPiece"]["costPerPieceList"][i]["param"].toFixed(2);
-            element["Per Kg"] = i == 0 ? (respone["fabricCostInfo"]["perPcFabric"] * perKg): respone["costPerPiece"]["costPerPieceList"][i]["value"].toFixed(2);
+            element["Per PC"] = i == 0 ? respone["fabricCostInfo"]["perPcFabric"].toFixed(2): respone["costPerPiece"]["costPerPieceList"][i]["param"].toFixed(2);
+            element["Per Kg"] = i == 0 ? (respone["fabricCostInfo"]["perPcFabric"] * perKg).toFixed(2): respone["costPerPiece"]["costPerPieceList"][i]["value"].toFixed(2);
         }
-
-        data.push({"Categories": "Total CMT Cost:", "Per PC": respone["costPerPiece"]["totalPerPc"].toFixed(2), "Per Kg": respone["costPerPiece"]["totalPerKg"].toFixed(2),})
+        data[data.length-1]["options"] = { fontSize: 10, font: fontBold, separation: true};
+        data.push({
+          options: { fontSize: 10, font: fontBold, separation: true},
+          "Categories": "Total CMT Cost:", 
+          "Per PC": respone["costPerPiece"]["totalPerPc"].toFixed(2), 
+          "Per Kg": respone["costPerPiece"]["totalPerKg"].toFixed(2)
+        })
       }
 
       // For CMT Per Pack Infomation
       else if(item.name == "CMT Per Pack Infomation"){
         for (let i = 0; i < data.length; i++) {
           const element = data[i];
-          if(i != 0){
-            element[""] = respone["cmtCost"]["cmtCostList"][i]["param"];
-          }else{
-            element[""] = respone["cmtCost"]["cmtCostList"][i]["param"];
-          }
+          element[""] = respone["cmtCost"]["cmtCostList"][i]["param"].toFixed(2);
         }
-
-        data.push({"Categories": "Total CMT Cost:", "": respone["cmtCost"]["perPackCostTotal"]})
+        data[data.length-1]["options"] = { fontSize: 10, font: fontBold, separation: true};
+        data.push({
+          options: { fontSize: 10, font: fontBold, separation: true},
+          "Categories": "Total CMT Cost:",
+          "": respone["cmtCost"]["perPackCostTotal"].toFixed(2)
+        })
       }
 
       // For Operating Cost
       else if(item.name == "Operating Infomation"){
         for (let i = 0; i < data.length; i++) {
           const element = data[i];
-          element["Percentages"] = respone["variableCost"]["variableCostList"][i]["param"];
+          element["Percentages"] = respone["variableCost"]["variableCostList"][i]["param"].toFixed(2);
           element["Per PC"] = respone["variableCost"]["variableCostList"][i]["value1"].toFixed(2);
           element["Per Kg"] = respone["variableCost"]["variableCostList"][i]["value2"].toFixed(2);
         }
-
-        data.push({"Categories": "Total Operating Cost:", "Per PC": respone["variableCost"]["perPcTotal"].toFixed(2), "Per Kg": respone["variableCost"]["perKgTotal"].toFixed(2)})
+        data[data.length-1]["options"] = { fontSize: 10, font: fontBold, separation: true};
+        data.push({
+          options: { fontSize: 10, font: fontBold, separation: true},
+          "Categories": "Total Operating Cost:", "Per PC": respone["variableCost"]["perPcTotal"].toFixed(2), 
+          "Per Kg": respone["variableCost"]["perKgTotal"].toFixed(2)
+        })
       }
 
       // For Finance / Operating / GP
       else if(item.name == "Finance / Operating / GP"){
         for (let i = 0; i < data.length; i++) {
           const element = data[i];
-          element["Percentages"] = respone["fog"]["fogList"][i]["param"];
+          element["Percentages"] = respone["fog"]["fogList"][i]["param"].toFixed(2);
           element["Per PC"] = respone["fog"]["fogList"][i]["value1"].toFixed(2);
           element["Per Kg"] = respone["fog"]["fogList"][i]["value2"].toFixed(2);
         }
-
-        data.push({"Categories": "Total Finance Cost:", "Per PC": respone["fog"]["totalPerPc"].toFixed(2), "Per Kg": respone["fog"]["totalPerKg"].toFixed(2)})
+        data[data.length-1]["options"] = { fontSize: 10, font: fontBold, separation: true};
+        data.push({
+          options: { fontSize: 10, font: fontBold, separation: true},
+          "Categories": "Total Finance Cost:", 
+          "Per PC": respone["fog"]["totalPerPc"].toFixed(2), 
+          "Per Kg": respone["fog"]["totalPerKg"].toFixed(2)
+        })
       }
 
       // For Final Cost For Customer
       else if(item.name == "Final Cost For Customer"){
         data[0]["Per PC"] = respone["finalCosting"]["finalCostingList"][0]["value1"];
-        data[0]["Per Kg"] = respone["finalCosting"]["finalCostingList"][0]["value2"];
+        data[0]["Per Kg"] = respone["finalCosting"]["finalCostingList"][0]["value2"]  ;
 
         if(previous["isCurrency"]){
-          data.push({"number":"","Title": "Cost in"+respone["basicInformation"][respone["basicInformation"].length - 1]["param"], "Per PC": respone["finalCosting"]["finalCostingList"][1]["value1"], "Per Kg": respone["finalCosting"]["finalCostingList"][1]["value2"]});
+          data.push({"number":"2","Title": "Cost in"+respone["basicInformation"][respone["basicInformation"].length - 1]["param"], "Per PC": respone["finalCosting"]["finalCostingList"][1]["value1"], "Per Kg": respone["finalCosting"]["finalCostingList"][1]["value2"]});
 }
       if(previous["isPack"])
         header.pop()
