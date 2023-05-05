@@ -144,9 +144,13 @@ router.get('/:id', async (req, res) =>{
             element[""] = respone["perPieceInfo"]["perPieceInfo_Cat"][i]["param"];
           }
           else if(previous["isNormal"] == 2){
-            if(i == 0 || i == data.length - 1)
+            if(i == 0)
               element["Total"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["param1"];
-            
+            else if(i == data.length){
+              element["Length"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["param1"];
+              element["Total"] = (respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["value"] * 1).toFixed(0);
+            }
+
             else{
               element["Width"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["param1"];
               element["Length"] = respone["perPieceInfo"]["perPieceInfo_Apparel"][i]["param2"];
