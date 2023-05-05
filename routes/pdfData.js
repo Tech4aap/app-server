@@ -136,12 +136,11 @@ router.get('/:id', async (req, res) =>{
 
       // For the Per Piece Information
       else if(item.name == "Per Piece Information" || item.name == "Per Piece Apparel Infomation"){
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < data.length; i++) {
           const element = data[i];
           
           if(previous["isNormal"] != 2){
             console.log(i);
-            console.log(respone["perPieceInfo"]["perPieceInfo_Cat"][i]["param"], i);
             element[""] = respone["perPieceInfo"]["perPieceInfo_Cat"][i]["param"];
           }
           else if(previous["isNormal"] == 2){
@@ -156,7 +155,7 @@ router.get('/:id', async (req, res) =>{
           }
         }
 
-        data.push({"Categories": `Piece Weight ${previous["isNormal"] == 3 ? " X 2(For Mattress Cover)": ""}`, "": respone["perPieceInfo"]["pieceWeight"], "Total": respone["perPieceInfo"]["pieceWeight"]})
+        data.push({"Categories": `Piece Weight ${previous["isNormal"] == 3 ? " X 2(For Matters)": ""}`, "": respone["perPieceInfo"]["pieceWeight"], "Total": respone["perPieceInfo"]["pieceWeight"]})
       }
 
       // For the Production Wastages
