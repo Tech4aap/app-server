@@ -9,16 +9,30 @@ const router = require("express").Router();
 
 async function getStructureOfData (){
   const structure = await Structure.find({status: true});
+  
   const respones = structure.map(({ name, header, rows }) => ({ name, header,rows}));
+  var sortedData = [];
+  const order = ["Basic Information", "Product Information", "Per Piece Information", "Per Piece Apparel Infomation", "Production Wastages", "Fabric Cost Information", "CMT Cost Per Piece (without Packing)", "CMT Per Pack Infomation", "Operating Infomation", "Finance / Operating / GP", "Final Cost For Customer"];
 
-  return respones;
+  console.log(respones);
+  order.map((item) => {
+    const index = respones.findIndex((items) => items.name == item);
+    if(index != -1){
+      sortedData.push(respones[index]);
+      respones.splice(index, 1);
+    }
+  });
+
+
+  return sortedData;
 }
+
 
 
 router.get('/:id', async (req, res) =>{
   let fontBold = 'Courier-Bold';
   let id = req.params.id;
-  
+  let respone;
   
   try {
     // Document Creation
@@ -33,7 +47,7 @@ router.get('/:id', async (req, res) =>{
     
     // For the table Structure
     const structure = await getStructureOfData();
-    const respone = (await pdfData.find({name: id}))[0].data;
+    respone = (await pdfData.find({name: id}))[0].data;
 
     // For Y axis Position
     let lastOne = 0;
@@ -87,7 +101,6 @@ router.get('/:id', async (req, res) =>{
       
         // For the Basic Information
       if(item.name == "Basic Information"){
-
         if(respone["basicInformation"][respone["basicInformation"].length - 1]["param"] == ""){
           data.pop();
           previous["isCurrency"] = false;
@@ -115,7 +128,7 @@ router.get('/:id', async (req, res) =>{
         let yarnInfo = null;
         for (let i = 0; i < yarns; i++) {
           yarnInfo = respone["productInformation"]["productInformationList"][i];
-          console.log((i == yarns - 1));
+          // console.log((i == yarns - 1));
           data.push({
             "number": data.length + 1,
             "Type": yarnInfo["selectType"],
@@ -127,7 +140,7 @@ router.get('/:id', async (req, res) =>{
           sum += yarnInfo["totalperkg"] * 1;
           percent += yarnInfo["param2"] * 1;
         }
-
+        
         data[data.length-1]["options"] = { fontSize: 10, font: fontBold, separation: true};
         data.push({
           options: { fontSize: 10, font: fontBold, separation: true},
@@ -139,11 +152,11 @@ router.get('/:id', async (req, res) =>{
 
       // For the Per Piece Information
       else if(item.name == "Per Piece Information" || item.name == "Per Piece Apparel Infomation"){
-        for (let i = 0; i < data.length; i++) {
+        const count = previous["isNormal"] != 2 ? 3: 6;
+        for (let i = 0; i < count; i++) {
           const element = data[i];
           
           if(previous["isNormal"] != 2){
-            console.log(i);
             element[""] = respone["perPieceInfo"]["perPieceInfo_Cat"][i]["param"];
           }
           else if(previous["isNormal"] == 2){
@@ -170,7 +183,8 @@ router.get('/:id', async (req, res) =>{
       // For the Production Wastages
       else if(item.name == "Production Wastages"){
         for (let i = 0; i < data.length; i++) {
-          let temp = previous["Product Information"][previous["Product Information"].length - 1]["Total per Kg"];
+          // console.log();
+          let temp = respone["productInformation"]["totalPerkg"]["Total per Kg"];
           const element = data[i];
 
           element["Percentages"] = respone["productWastage"]["productWastageList"][i]["param"];
@@ -276,7 +290,7 @@ router.get('/:id', async (req, res) =>{
         header.pop()
       else{
         data[0]["Per Pack"] = respone["finalCosting"]["finalCostingList"][0]["value3"];
-        console.log(respone["finalCosting"]["finalCostingList"][1]);
+        // console.log(respone["finalCosting"]["finalCostingList"][1]);
         if(previous["isCurrency"])
           data[1]["Per Pack"] = respone["finalCosting"]["finalCostingList"][1]["value3"];
       }
@@ -318,8 +332,8 @@ router.get('/:id', async (req, res) =>{
    
 
   } catch (err) {
-    console.log(err);
-    res.status(500).json({message: err.message});
+    // console.log(err);
+    res.status(500).json({message: respone});
   }
 });
 
